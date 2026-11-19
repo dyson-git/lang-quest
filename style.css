@@ -237,3 +237,7 @@ button.cell:active { background: var(--line); }
 .dcol.zh .dhead { color: var(--zh); } .dcol.jp .dhead { color: var(--jp); }
 .dcol .choice { padding: 10px 8px; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
 .choice.sel { border-color: var(--ink); background: var(--gold); color: #1B2330; }
+
+.warn { margin-top: 16px; padding: 10px 12px; border: 2px solid var(--zh); border-radius: 10px; background: var(--card); font-size: 15px; line-height: 1.5; }
+.backup { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.codebox { width: 100%; box-sizing: border-box; font: 13px/1.4 monospace; padding: 8px; border: 2px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); word-break: break-all; }

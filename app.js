@@ -7,7 +7,18 @@
   var KEY = "geulja-yeohaeng-v1";
   var S = { done: {}, xp: 0, streak: 0, last: "" };
   try { var raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch (e) {}
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  var STORE_OK = false;
+  try { localStorage.setItem(KEY + "-probe", "1"); STORE_OK = localStorage.getItem(KEY + "-probe") === "1"; localStorage.removeItem(KEY + "-probe"); } catch (e) {}
+  var IN_APP = /KAKAOTALK|NAVER\(|Instagram|FBAN|FBAV|Line\/|DaumApps/i.test(navigator.userAgent || "");
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { STORE_OK = false; } }
+  function packCode() { try { return btoa(unescape(encodeURIComponent(JSON.stringify(S)))); } catch (e) { return ""; } }
+  function unpackCode(t) {
+    try {
+      var o = JSON.parse(decodeURIComponent(escape(atob(String(t).replace(/\s+/g, "")))));
+      if (o && typeof o === "object" && o.done && typeof o.done === "object") return o;
+    } catch (e) {}
+    return null;
+  }
   function today() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
   function touchStreak() {
     var t = today();
@@ -239,7 +250,10 @@
       '<div class="testbar"><button class="btn primary" data-act="test"' + (learned < 3 ? " disabled" : "") + '>단어 시험</button>' +
       '</div><p class="hint">' + (learned < 3 ? "단어 시험은 한자 레슨을 하나 끝내면 열려요" : "단어 시험: 배운 한자 " + learned + "개에서 무작위 10문제") + '</p></section><div class="lines">';
     HOME_ORDER.forEach(function (id) { html += GROUPS[id] ? groupTile(GROUPS[id]) : lineTile(lineById(id)); });
-    html += "</div>" + '<p style="margin-top:20px"><button class="link" data-act="unlock">' + (S.all ? "잠금 다시 켜기" : "모든 역 미리 보기 (잠금 해제)") + "</button></p>";
+    var warn = !STORE_OK ? "이 화면에서는 진행이 저장되지 않아요. 크롬·사파리 같은 일반 브라우저(시크릿 창 제외)에서 열거나, 아래 ‘진행 백업’ 코드를 보관해 두세요." : IN_APP ? "카카오톡·네이버 같은 앱 안의 브라우저는 저장이 지워질 수 있어요. 크롬이나 사파리로 열어 주세요." : "";
+    html += "</div>" + (warn ? '<p class="warn" role="alert">' + warn + "</p>" : '<p class="hint" style="margin-top:16px">✓ 진행은 이 기기의 이 브라우저에 자동 저장돼요.</p>') +
+      '<p class="backup"><button class="btn" data-act="export">진행 백업</button> <button class="btn" data-act="import">진행 복원</button></p>' +
+      '<p style="margin-top:12px"><button class="link" data-act="unlock">' + (S.all ? "잠금 다시 켜기" : "모든 역 미리 보기 (잠금 해제)") + "</button></p>";
     return html + "</main>";
   }
   function viewLine() {
@@ -421,6 +435,29 @@
     if (a === "mute") { S.mute = !S.mute; save(); if (S.mute) try { speechSynthesis.cancel(); } catch (x) {} return render(); }
     if (a === "peek") { V.sheet = peekHtml(el.getAttribute("data-k")); render(); return speakIn($app.querySelector(".sheet")); }
     if (a === "syl") { V.sheet = sylHtml(el.getAttribute("data-s")); return render(); }
+    if (a === "export") {
+      V.sheet = "<h3>진행 백업</h3><p class=\"hint\">아래 코드를 복사해 메모 앱 등에 보관하세요. 다른 기기나 브라우저에서 ‘진행 복원’에 붙여 넣으면 이어서 할 수 있어요.</p><textarea id=\"code\" class=\"codebox\" readonly rows=\"5\">" + esc(packCode()) + "</textarea><p><button class=\"btn\" data-act=\"copycode\">코드 복사</button> <small id=\"copied\"></small></p>";
+      return render();
+    }
+    if (a === "copycode") {
+      var ta = document.getElementById("code");
+      if (!ta) return;
+      ta.select();
+      var okc = false;
+      try { if (navigator.clipboard) { navigator.clipboard.writeText(ta.value); okc = true; } } catch (e) {}
+      if (!okc) try { okc = document.execCommand("copy"); } catch (e) {}
+      var cp = document.getElementById("copied"); if (cp) cp.textContent = okc ? "복사했어요" : "길게 눌러 직접 복사하세요";
+      return;
+    }
+    if (a === "import") {
+      V.sheet = "<h3>진행 복원</h3><p class=\"hint\">백업 코드를 붙여 넣으세요. 지금 진행은 코드의 진행으로 바뀝니다.</p><textarea id=\"codein\" class=\"codebox\" rows=\"5\" placeholder=\"백업 코드\"></textarea><p><button class=\"btn primary\" data-act=\"doimport\">복원하기</button> <small id=\"impmsg\"></small></p>";
+      return render();
+    }
+    if (a === "doimport") {
+      var tin = document.getElementById("codein"), o = tin ? unpackCode(tin.value) : null, msg = document.getElementById("impmsg");
+      if (!o) { if (msg) msg.textContent = "코드가 올바르지 않아요"; return; }
+      S = Object.assign({ done: {}, xp: 0, streak: 0, last: "" }, o); save(); V.sheet = null; return go({ name: "home" });
+    }
     if (a === "closesheet") { V.sheet = null; return render(); }
     if (a === "home") return go({ name: "home" });
     if (a === "passport") return go({ name: "passport" });
