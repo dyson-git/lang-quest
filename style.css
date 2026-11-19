@@ -244,3 +244,16 @@ button.cell:active { background: var(--line); }
 
 .install { margin-top: 12px; } .howto { padding-left: 20px; line-height: 1.7; }
 @media (max-height: 760px) { .dual .choice { padding: 8px 6px; font-size: 15px; } .dcol { gap: 6px; } .gbox { padding: 6px 4px; } .gbox .g { font-size: 46px; } }
+
+/* 학습 카드를 한 화면에: 제목줄 제거, 다음 버튼 고정, 여백 압축 */
+.cnt { font-family: var(--font-head); font-size: 14px; color: var(--ink2); min-width: 34px; }
+.next-bar { position: sticky; bottom: 0; padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--paper) 78%, transparent); margin-top: 8px; }
+.card { padding: 12px; margin-top: 6px; }
+.card .pair { margin: 2px 0 8px; gap: 8px; }
+.card .gbox .g { font-size: 44px; }
+.card .read { gap: 8px; margin-top: 2px; } .card .read > div { font-size: 14px; line-height: 1.4; } .card .read .big { font-size: 18px; }
+.card .evo { margin: 8px 0 4px; padding: 8px; } .card .evo svg { width: 56px; height: 56px; } .card .evo .res { font-size: 42px; }
+.card .note-h { margin-top: 6px; font-size: 14px; } .card .note-p { font-size: 15px; line-height: 1.45; }
+.card .tip { margin-top: 6px; padding: 6px 10px; font-size: 14px; line-height: 1.4; }
+.card .take { margin-top: 6px; padding: 6px 10px; font-size: 14px; }
+.card .eq { margin: 4px 0 6px; } .card .eq .pc .p { font-size: 30px; }

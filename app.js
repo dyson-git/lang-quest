@@ -323,14 +323,14 @@
     var total = V.phase === "learn" ? V.cards.length : V.qs.length;
     var cur = V.phase === "learn" ? V.ci : V.qi;
     var pct = Math.round(cur / Math.max(total, 1) * 100);
-    return '<div class="wrap ' + V.line.cls + '"><div class="lesson-top"><div class="bar" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><span style="width:' + pct + '%"></span></div>' +
+    return '<div class="wrap ' + V.line.cls + '"><div class="lesson-top"><span class="cnt" title="' + esc(V.title) + '">' + (V.phase === "learn" ? (V.ci + 1) + "/" + V.cards.length : (V.qi + 1) + "/" + V.qs.length) + '</span><div class="bar" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><span style="width:' + pct + '%"></span></div>' +
       (V.phase === "quiz" ? '<span class="hearts" aria-label="하트 ' + V.hearts + '개">♥ ' + V.hearts + "</span>" : "") +
       '<button class="x" data-act="back" aria-label="그만두기">✕</button></div>';
   }
   function viewLearn() {
     var c = V.cards[V.ci], last = V.ci === V.cards.length - 1;
-    return lessonHead() + "<h2>" + V.title + "</h2>" + c.html +
-      '<p style="margin-top:16px"><button class="btn primary block" data-act="next">' + (last ? "문제 풀기" : "다음") + "</button></p></div>";
+    return lessonHead() + c.html +
+      '<div class="next-bar"><button class="btn primary block" data-act="next">' + (last ? "문제 풀기" : "다음") + "</button></div></div>";
   }
   function viewQuiz() {
     var q = V.qs[V.qi], answered = V.picked >= 0;
