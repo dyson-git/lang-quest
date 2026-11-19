@@ -75,18 +75,18 @@ h1, h2, h3 { font-family: var(--font-head); font-weight: 400; margin: 0; line-he
 .soon { color: var(--ink2); font-size: 14px; padding: 6px 0 0 66px; }
 
 /* 레슨 화면 */
-.lesson-top { display: flex; align-items: center; gap: 12px; padding: 14px 0; }
-.x { background: none; border: 0; font-size: 24px; padding: 4px 8px; color: var(--ink2); }
+.lesson-top { display: flex; align-items: center; gap: 10px; padding: 8px 0 4px; }
+.x { background: none; border: 0; font-size: 22px; line-height: 1; padding: 6px 4px 6px 10px; color: var(--ink2); }
 .bar { flex: 1; height: 14px; background: var(--line); border-radius: 7px; overflow: hidden; }
 .bar > span { display: block; height: 100%; background: var(--lc, var(--gold)); border-radius: 7px; transition: width .3s; }
 .hearts { font-family: var(--font-head); color: var(--bad); }
-.q-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-top: 8px; }
-.q-prompt { font-family: var(--font-head); font-size: 22px; margin-bottom: 14px; }
+.q-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-top: 4px; }
+.q-prompt { font-family: var(--font-head); font-size: 20px; margin-bottom: 8px; }
 .pair { display: flex; gap: 12px; margin: 6px 0 14px; }
 .gbox { flex: 1; text-align: center; border-radius: 14px; padding: 10px 6px 8px; }
 .gbox.zh { background: var(--zh-bg); }
 .gbox.jp { background: var(--jp-bg); }
-.gbox .g { font-size: 64px; line-height: 1.15; display: block; }
+.gbox .g { font-size: 52px; line-height: 1.1; display: block; }
 .gbox.zh .g { color: var(--zh); }
 .gbox.jp .g { color: var(--jp); }
 .gbox .lbl { font-size: 13px; color: var(--ink2); }
@@ -241,3 +241,6 @@ button.cell:active { background: var(--line); }
 .warn { margin-top: 16px; padding: 10px 12px; border: 2px solid var(--zh); border-radius: 10px; background: var(--card); font-size: 15px; line-height: 1.5; }
 .backup { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
 .codebox { width: 100%; box-sizing: border-box; font: 13px/1.4 monospace; padding: 8px; border: 2px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); word-break: break-all; }
+
+.install { margin-top: 12px; } .howto { padding-left: 20px; line-height: 1.7; }
+@media (max-height: 760px) { .dual .choice { padding: 8px 6px; font-size: 15px; } .dcol { gap: 6px; } .gbox { padding: 6px 4px; } .gbox .g { font-size: 46px; } }

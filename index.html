@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>글자여행</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#C63D2F">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="글자여행">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&family=Noto+Serif+JP:wght@600&family=Noto+Serif+SC:wght@600&display=swap" rel="stylesheet">
@@ -32,5 +39,6 @@
 <script src="data/pyhz.js"></script>
 <script src="data/zh2.js"></script>
 <script src="app.js"></script>
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) { navigator.serviceWorker.register("sw.js").catch(function () {}); }</script>
 </body>
 </html>
