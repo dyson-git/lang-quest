@@ -39,7 +39,7 @@
   function mk(list, type) { return list.map(function (l) { return { id: l.id, title: l.title, type: type, data: l }; }); }
   var LINES = [
     { id: "zh", cls: "zh-line", tag: "中", name: "중국어 성조·발음", sub: "성모·운모·성조 전부, 혀 모양부터", st: mk(window.PINYIN_LESSONS, "pinyin") },
-    { id: "hz", cls: "mix-line", tag: "字", name: "중국어 + 일본어 한자", sub: "중국어 | 일본어 나란히 · " + Object.keys(HZ).length + "/500개", st: mk(window.HANZI_LESSONS, "hanzi").concat(mk(window.COMBO_LESSONS || [], "en")) },
+    { id: "hz", cls: "mix-line", tag: "字", name: "중국어 + 일본어 한자", sub: "중국어 | 일본어 나란히 · " + Object.keys(HZ).length + "개", st: mk(window.HANZI_LESSONS, "hanzi").concat(mk(window.COMBO_LESSONS || [], "en")) },
     { id: "jp", cls: "jp-line", tag: "日", name: "일본어 문장", sub: "이키마스부터 길 묻기까지", group: "sent", st: mk(window.JP_LESSONS, "jp") },
     { id: "zs", cls: "zh-line", tag: "中", name: "중국어 문장", sub: "인사부터 긴급 상황까지, 성조 표시", group: "sent", st: mk(window.ZH_LESSONS || [], "jp") },
     { id: "en", cls: "en-line", tag: "A", name: "영어 기초문법", sub: "be동사부터 시제까지, 문제마다 해설", group: "gram", st: mk(window.EN_LESSONS, "en") },
@@ -49,7 +49,7 @@
     gram: { id: "gram", cls: "en-line", tag: "法", name: "문법", sub: "눌러서 영어나 일본어를 고르세요", kids: ["en", "jg"] } };
   var HOME_ORDER = ["zh", "hz", "sent", "gram"];
   function lineById(id) { return LINES.filter(function (l) { return l.id === id; })[0]; }
-  function stageNo(t) { var m = /^(\d)단계/.exec(t); return m ? +m[1] : 0; }
+  function stageNo(t) { var m = /^(\d+)단계/.exec(t); return m ? +m[1] : 0; }
   LINES.forEach(function (ln) {
     ln.st = ln.st.map(function (x, i) { return { x: x, i: i }; }).sort(function (a, b) { return stageNo(a.x.title) - stageNo(b.x.title) || a.i - b.i; }).map(function (o) { return o.x; });
   });
