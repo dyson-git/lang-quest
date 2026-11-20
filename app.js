@@ -42,10 +42,12 @@
     { id: "hz", cls: "mix-line", tag: "字", name: "중국어 + 일본어 한자", sub: "중국어 | 일본어 나란히 · " + Object.keys(HZ).length + "/500개", st: mk(window.HANZI_LESSONS, "hanzi").concat(mk(window.COMBO_LESSONS || [], "en")) },
     { id: "jp", cls: "jp-line", tag: "日", name: "일본어 문장", sub: "이키마스부터 길 묻기까지", group: "sent", st: mk(window.JP_LESSONS, "jp") },
     { id: "zs", cls: "zh-line", tag: "中", name: "중국어 문장", sub: "인사부터 긴급 상황까지, 성조 표시", group: "sent", st: mk(window.ZH_LESSONS || [], "jp") },
-    { id: "en", cls: "en-line", tag: "A", name: "영어 문법", sub: "문제마다 해설 포함", st: mk(window.EN_LESSONS, "en") }
+    { id: "en", cls: "en-line", tag: "A", name: "영어 기초문법", sub: "be동사부터 시제까지, 문제마다 해설", group: "gram", st: mk(window.EN_LESSONS, "en") },
+    { id: "jg", cls: "jp-line", tag: "日", name: "일본어 기초문법", sub: "です·ます·조사부터 て형·가정까지", group: "gram", st: mk(window.JG_LESSONS || [], "en") }
   ];
-  var GROUPS = { sent: { id: "sent", cls: "mix-line", tag: "文", name: "일본어 / 중국어 문장", sub: "눌러서 일본어나 중국어를 고르세요", kids: ["jp", "zs"] } };
-  var HOME_ORDER = ["zh", "hz", "sent", "en"];
+  var GROUPS = { sent: { id: "sent", cls: "mix-line", tag: "文", name: "일본어 / 중국어 문장", sub: "눌러서 일본어나 중국어를 고르세요", kids: ["jp", "zs"] },
+    gram: { id: "gram", cls: "en-line", tag: "法", name: "문법", sub: "눌러서 영어나 일본어를 고르세요", kids: ["en", "jg"] } };
+  var HOME_ORDER = ["zh", "hz", "sent", "gram"];
   function lineById(id) { return LINES.filter(function (l) { return l.id === id; })[0]; }
   function stageNo(t) { var m = /^(\d)단계/.exec(t); return m ? +m[1] : 0; }
   LINES.forEach(function (ln) {
@@ -248,7 +250,7 @@
   }
   function viewSent() {
     var g = GROUPS.sent;
-    return topbar() + '<main class="wrap"><p><button class="link" data-act="home">← 뒤로</button></p><div class="line-head"><span class="line-tag" style="background:var(--lc)">' + g.tag + "</span><h2>" + g.name + '</h2></div><p class="hint">여행에서 바로 쓰는 문장을 언어별로 배웁니다.</p><div class="lines">' + g.kids.map(function (k) { return lineTile(lineById(k)); }).join("") + "</div></main>";
+    return topbar() + '<main class="wrap"><p><button class="link" data-act="home">← 뒤로</button></p><div class="line-head"><span class="line-tag" style="background:var(--lc)">' + g.tag + "</span><h2>" + g.name + '</h2></div><p class="hint">' + (g.id === "gram" ? "기초 문법을 언어별로 배웁니다." : "여행에서 바로 쓰는 문장을 언어별로 배웁니다.") + '</p><div class="lines">' + g.kids.map(function (k) { return lineTile(lineById(k)); }).join("") + "</div></main>";
   }
   function viewHome() {
     var learned = learnedChars().length;
