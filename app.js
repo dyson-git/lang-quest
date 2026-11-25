@@ -209,7 +209,10 @@
   // ── 상태 ──────────────────────────────
   var V = { name: "home" };
   var OPEN = {};
-  function go(v) { V = v; lastAuto = ""; render(); window.scrollTo(0, 0); }
+  function go(v) {
+    V = v; lastAuto = ""; render(); window.scrollTo(0, 0);
+    if (v.name === "line") { try { var n = document.querySelector(".st.next"); if (n) n.scrollIntoView({ block: "center" }); } catch (e) {} }
+  }
 
   function startLesson(id) {
     var f = findStation(id);
@@ -299,11 +302,13 @@
       html += '<p class="stage-test"><button class="btn" data-act="test" data-k="' + sn + '"' + (lc < 3 ? " disabled" : "") + ">" + key + " 단어 시험</button> <small>" + (lc < 3 ? "이 단계 레슨을 하나 끝내면 열려요" : "배운 " + lc + "자에서 무작위 10문제") + "</small></p>";
     }
     html += '<ol class="stations">';
+    var nextId = "";
+    g.items.forEach(function (x) { if (!nextId && !S.done[x.s.id] && unlocked(ln, x.i)) nextId = x.s.id; });
     g.items.forEach(function (x) {
-      var s = x.s, done = S.done[s.id], open = unlocked(ln, x.i);
+      var s = x.s, done = S.done[s.id], open = unlocked(ln, x.i), nx = s.id === nextId;
       var glyphs = s.type === "hanzi" ? s.data.chars.map(function (c) { return HZ[c].zh; }).join("") : "";
       var cnt = s.type === "jp" ? s.data.items.length + "문장" : s.type === "hanzi" ? s.data.chars.length + "자" : (s.data.quiz ? s.data.quiz.length + "문제" : "");
-      html += '<li class="st' + (done ? " done" : "") + (open ? "" : " lock") + '"><span class="dot"></span><button data-act="start" data-id="' + s.id + '"' + (open ? "" : ' disabled aria-label="잠김"') + '><span><span class="t">' + x.t + '</span><span class="s">' + (open ? (done ? "도장 찍음 · 다시 하기" : "시작하기") : "앞 역을 먼저 끝내세요") + " · " + cnt + '</span></span><span class="gl zh-glyph">' + glyphs + "</span></button></li>";
+      html += '<li class="st' + (done ? " done" : "") + (open ? "" : " lock") + (nx ? " next" : "") + '"><span class="dot"></span><button data-act="start" data-id="' + s.id + '"' + (open ? "" : ' disabled aria-label="잠김"') + '><span><span class="t">' + x.t + '</span><span class="s">' + (open ? (done ? "도장 찍음 · 다시 하기" : nx ? "이어서 하기" : "시작하기") : "앞 역을 먼저 끝내세요") + " · " + cnt + '</span></span><span class="gl zh-glyph">' + glyphs + "</span></button></li>";
     });
     html += "</ol>";
     if (ln.id === "zh") html += '<p class="hint" style="margin-top:18px">레슨은 성조·성모·운모 핵심 87개입니다. 전체 음절 406개는 참고용 표로 따로 뒀어요.</p><p><button class="btn" data-act="chart">전체 음절표 보기 (참고)</button></p>';
@@ -495,9 +500,9 @@
     if (a === "home") return go({ name: "home" });
     if (a === "passport") return go({ name: "passport" });
     if (a === "chart") return go({ name: "chart" });
-    if (a === "line") return go({ name: "line", id: el.getAttribute("data-id") });
+    if (a === "line") { if (S.stage) delete S.stage[el.getAttribute("data-id")]; return go({ name: "line", id: el.getAttribute("data-id") }); }
     if (a === "stage") { S.stage = S.stage || {}; S.stage[el.getAttribute("data-id")] = el.getAttribute("data-k"); save(); return render(); }
-    if (a === "back") return go(V.line ? { name: "line", id: V.line.id } : { name: "home" });
+    if (a === "back") { if (V.line && S.stage) delete S.stage[V.line.id]; return go(V.line ? { name: "line", id: V.line.id } : { name: "home" }); }
     if (a === "unlock") { S.all = !S.all; save(); return render(); }
     if (a === "card") return go({ name: "card", c: el.getAttribute("data-c") });
     if (a === "start") return startLesson(el.getAttribute("data-id"));

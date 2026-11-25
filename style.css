@@ -257,3 +257,5 @@ button.cell:active { background: var(--line); }
 .card .tip { margin-top: 6px; padding: 6px 10px; font-size: 14px; line-height: 1.4; }
 .card .take { margin-top: 6px; padding: 6px 10px; font-size: 14px; }
 .card .eq { margin: 4px 0 6px; } .card .eq .pc .p { font-size: 30px; }
+.st.next button { outline: 2px solid var(--lc); outline-offset: -2px; font-weight: 700; }
+.st.next .dot { box-shadow: 0 0 0 4px color-mix(in srgb, var(--lc) 30%, transparent); }
