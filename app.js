@@ -192,7 +192,7 @@
       var a = distract(it.m, pool.map(function (x) { return x.m; }), 3), c1 = shuffle([it.m].concat(a));
       qs.push({ prompt: "이 말의 뜻은?", glyph: null, big: it.jp, bigCls: isZh ? "zh-glyph" : "jp-glyph", lang: it.lang || "ja-JP", choices: c1, answer: c1.indexOf(it.m), after: jpAfter(it) });
       var b = distract(it.jp, pool.map(function (x) { return x.jp; }), 3), c2 = shuffle([it.jp].concat(b));
-      qs.push({ prompt: (isZh ? "중국어" : "일본어") + "로 '" + it.m + "'는?", choices: c2, answer: c2.indexOf(it.jp), after: jpAfter(it) });
+      qs.push({ prompt: (isZh ? "중국어" : "일본어") + "로 '" + it.m + "'는?", choices: c2, answer: c2.indexOf(it.jp), cl: it.lang || "ja-JP", after: jpAfter(it) });
     });
     return shuffle(qs).slice(0, 12);
   }
@@ -200,7 +200,9 @@
     return lesson.quiz.map(function (q) {
       var en = q.q.replace(/\([^)]*[가-힣][^)]*\)/g, "").replace(/___/, q.c[q.a]).replace(/→/g, ",").replace(/—|–/g, ",").trim();
       var hasEn = /[A-Za-z]{2}/.test(en) && !/[가-힣]/.test(en);
-      return { prompt: q.q, choices: q.c, answer: q.a, after: '<div class="card">' + (hasEn ? '<div class="en-say">' + esc(en) + " " + speakBtn(en, "en-US", "영") + "</div>" : "") + q.x + "</div>", shuffle: false };
+      var jaS = q.q.indexOf("→") >= 0 ? q.q.split("→")[1] : q.q, hasJa = /[぀-ヿ]/.test(jaS);
+      var ja = jaS.replace(/\([^)]*\)/g, "").replace(/___/, q.c[q.a]).replace(/\s+/g, "").trim();
+      return { prompt: q.q, choices: q.c, answer: q.a, after: '<div class="card">' + (hasEn ? '<div class="en-say">' + esc(en) + " " + speakBtn(en, "en-US", "영") + "</div>" : "") + (!hasEn && hasJa ? '<div class="en-say">' + esc(ja) + " " + speakBtn(ja, "ja-JP", "일") + "</div>" : "") + q.x + "</div>", shuffle: false };
     });
   }
 
@@ -360,7 +362,7 @@
       var jpBox = '<div class="gbox jp"><button class="g jp-glyph peek" lang="ja"' + pk + ">" + h.jp + '</button><span class="lbl">일본어</span></div>';
       head += '<div class="pair">' + zhBox + jpBox + "</div>";
     }
-    if (q.big) head += '<div class="' + q.bigCls + '" lang="' + (q.lang === "zh-CN" ? "zh-Hans" : "ja") + '" style="font-size:34px;margin-bottom:8px;color:var(--' + (q.lang === "zh-CN" ? "zh" : "jp") + ')">' + q.big + "</div>";
+    if (q.big) head += '<div class="' + q.bigCls + '" lang="' + (q.lang === "zh-CN" ? "zh-Hans" : "ja") + '" style="font-size:34px;margin-bottom:8px;color:var(--' + (q.lang === "zh-CN" ? "zh" : "jp") + ')">' + q.big + " " + speakBtn(q.big, q.lang || "ja-JP", "듣기") + "</div>";
     if (q.dual) {
       var col = function (side, list, ans, sel, name, cls0) {
         return '<div class="dcol ' + cls0 + '"><div class="dhead">' + name + "</div>" + list.map(function (c, i) {
@@ -524,6 +526,7 @@
       if (V.picked >= 0) return;
       V.picked = +el.getAttribute("data-i");
       var q = V.qs[V.qi];
+      if (q.cl) { try { speak(q.choices[V.picked], q.cl); } catch (e) {} }
       if (V.picked === q.answer) { V.right++; S.xp += 10; save(); return advance(); }
       V.hearts--; save(); return render();
     }
