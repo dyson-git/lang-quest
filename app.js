@@ -249,8 +249,8 @@
     return '<button class="lcard ' + g.cls + '" data-act="line" data-id="' + g.id + '"><span class="line-tag" style="background:var(--lc)">' + g.tag + '</span><span class="lc-body"><span class="lc-name">' + g.name + '</span><span class="lc-sub">' + g.sub + '</span><span class="lc-bar"><span style="width:' + Math.round(done / total * 100) + '%"></span></span></span><span class="lc-n">' + done + "/" + total + "<small>역</small></span></button>";
   }
   function viewSent() {
-    var g = GROUPS.sent;
-    return topbar() + '<main class="wrap"><p><button class="link" data-act="home">← 뒤로</button></p><div class="line-head"><span class="line-tag" style="background:var(--lc)">' + g.tag + "</span><h2>" + g.name + '</h2></div><p class="hint">' + (g.id === "gram" ? "기초 문법을 언어별로 배웁니다." : "여행에서 바로 쓰는 문장을 언어별로 배웁니다.") + '</p><div class="lines">' + g.kids.map(function (k) { return lineTile(lineById(k)); }).join("") + "</div></main>";
+    var g = GROUPS[V.id] || GROUPS.sent;
+    return topbar() + '<main class="wrap ' + g.cls + '"><p><button class="link" data-act="home">← 뒤로</button></p><div class="line-head"><span class="line-tag" style="background:var(--lc)">' + g.tag + "</span><h2>" + g.name + '</h2></div><p class="hint">' + (g.id === "gram" ? "기초 문법을 언어별로 배웁니다." : "여행에서 바로 쓰는 문장을 언어별로 배웁니다.") + '</p><div class="lines">' + g.kids.map(function (k) { return lineTile(lineById(k)); }).join("") + "</div></main>";
   }
   function viewHome() {
     var learned = learnedChars().length;
