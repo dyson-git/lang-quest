@@ -75,6 +75,21 @@
   function speakBtn(text, lang, label) {
     return '<button class="speak" data-act="say" data-t="' + esc(encodeURIComponent(text)) + '" data-l="' + lang + '" aria-label="' + label + ' 듣기">🔊 ' + label + "</button>";
   }
+  // 훈·음 읽기를 모두 차례로 읽기: "ひと(つ)・いち" → "ひとつ、いち"
+  function jaReadings(jk) { return String(jk).replace(/[()（）]/g, "").split("・").join("、"); }
+  var REV = {};
+  Object.keys({ a: 1, e: 1, i: 1, o: 1, u: 1, "ü": 1 }).forEach(function (v) {
+    var t = { a: "āáǎà", e: "ēéěè", i: "īíǐì", o: "ōóǒò", u: "ūúǔù", "ü": "ǖǘǚǜ" }[v];
+    for (var k = 0; k < 4; k++) REV[t.charAt(k)] = [v === "ü" ? "v" : v, k + 1];
+  });
+  // 성조 표시 병음 → 그 소리를 내는 대표 한자(성조가 정확히 들리도록)
+  function zhPlayable(py) {
+    return String(py).split(" ").map(function (sy) {
+      var t = 5, base = sy.split("").map(function (c) { if (REV[c]) { t = REV[c][1]; return REV[c][0]; } return c; }).join("").replace(/ü/g, "v");
+      var key = base.replace(/v/g, "v") + t, hz = window.PYHZ && (window.PYHZ[key] || window.PYHZ[base.replace(/v/, "ü") + t]);
+      return hz || sy;
+    }).join("");
+  }
   function speak(text, lang) { speakSeq([[text, lang]], true); }
   function speakSeq(list, force) {
     try {
@@ -115,7 +130,7 @@
       '<div class="gbox jp"><button class="g jp-glyph peek" lang="ja" data-act="peek" data-k="' + key + '">' + h.jp + '</button><span class="lbl">일본어</span></div></div>';
     var read = '<div class="read">' +
       '<div class="zhb"><b>중국어 ' + speakBtn(h.zh, "zh-CN", "중") + '</b><span class="big">' + h.py + "</span><br>한글 " + h.pk + "<br>" + h.cx + "</div>" +
-      '<div class="jpb"><b>일본어 ' + speakBtn(h.jp, "ja-JP", "일") + '</b><span class="big">' + h.jk + "</span><br>" + h.jr + " · 한글 " + h.jko + "<br>" + h.jx + "</div></div>";
+      '<div class="jpb"><b>일본어 ' + speakBtn(jaReadings(h.jk), "ja-JP", "일") + '</b><span class="big">' + h.jk + "</span><br>" + h.jr + " · 한글 " + h.jko + "<br>" + h.jx + "</div></div>";
     var evo = "";
     if (h.pic && window.PICS[h.pic]) {
       var res = '<span class="res zh-glyph" lang="zh-Hans">' + h.zh + "</span>" + (h.jp !== h.zh ? '<span class="res jp-glyph" lang="ja">' + h.jp + "</span>" : "");
@@ -413,7 +428,7 @@
     var h = HZ[key];
     return '<h3>' + h.zh + " · " + h.jp + "</h3>" +
       '<div class="pk zh-side"><b>중국어</b> ' + speakBtn(h.zh, "zh-CN", "듣기") + '<div class="big">' + h.py + "</div>한글 " + h.pk + "<br>" + h.m + "</div>" +
-      '<div class="pk jp-side"><b>일본어</b> ' + speakBtn(h.jp, "ja-JP", "듣기") + '<div class="big">' + h.jk + "</div>" + h.jr + " · 한글 " + h.jko + "<br>" + h.m + "</div>";
+      '<div class="pk jp-side"><b>일본어</b> ' + speakBtn(jaReadings(h.jk), "ja-JP", "듣기") + '<div class="big">' + h.jk + "</div>" + h.jr + " · 한글 " + h.jko + "<br>" + h.m + "</div>";
   }
   function sylHtml(sy) {
     var E = window.ENGINE, arrows = ["―", "↗", "↘↗", "↘"], names = ["1성", "2성", "3성", "4성"];
@@ -494,6 +509,10 @@
       if (V.picked >= 0) return;
       var qd = V.qs[V.qi], side = el.getAttribute("data-s"), idx = +el.getAttribute("data-i");
       if (side === "L") V.pL = idx; else V.pR = idx;
+      try {
+        var opt = (side === "L" ? qd.left : qd.right)[idx], head = String(opt).split(" (")[0];
+        if (side === "L") speak(zhPlayable(head), "zh-CN"); else speak(jaReadings(head), "ja-JP");
+      } catch (e) {}
       if (V.pL >= 0 && V.pR >= 0) {
         V.picked = 0;
         if (V.pL === qd.answerL && V.pR === qd.answerR) { V.right++; S.xp += 10; save(); return advance(); }
