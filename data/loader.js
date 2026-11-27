@@ -20,4 +20,10 @@
       window.HANZI_LESSONS.push({ id: "s" + stage + "_" + (li + 1), title: stage + "단계 · " + les.title, chars: chars });
     });
   });
+  // 손으로 쓴 초기 한자(hanzi.js)도 같은 규칙으로 한글 발음을 다시 만든다
+  Object.keys(window.HANZI).forEach(function (k) {
+    var h = window.HANZI[k];
+    if (h.py && h.py.indexOf(" / ") < 0) h.pk = E.pyKo(h.py, false);
+    if (h.jk) { try { h.jko = E.readings(h.jk).jko; } catch (e) {} }
+  });
 })();
